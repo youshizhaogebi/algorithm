@@ -1,0 +1,15 @@
+二分法
+
+target 在 [left, right] 区间：
+1.while (left <= right) 要使用 <= ，因为left == right是有意义的，所以使用 <=
+2.if (nums[middle] > target) ， right 更新为 middle - 1，因为当前 nums[middle] 一定不是 target ，
+那么接下来要查找的左区间结束下标位置就是 middle - 1
+
+target 在 [left, right) 区间：
+1.while (left < right)，这里使用 < ,因为left == right在区间[left, right)是没有意义的
+2.if (nums[middle] > target) ， right 更新为 middle，因为当前 nums[middle] 不等于 target ，
+去左区间继续寻找，而寻找区间是左闭右开区间，所以 right 更新为 middle ，即：下一个查询区间不会去比较 nums[middle]
+
+
+
+感觉发挥不了 go 语言并行执行的特性
