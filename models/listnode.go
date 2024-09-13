@@ -145,12 +145,20 @@ func SwapPairs(head *ListNode) *ListNode {
 	return dummyHead.Next
 }
 
-/**
- * Your MyLinkedList object will be instantiated and called as such:
- * obj := Constructor();
- * param_1 := obj.Get(index);
- * obj.AddAtHead(val);
- * obj.AddAtTail(val);
- * obj.AddAtIndex(index,val);
- * obj.DeleteAtIndex(index);
- */
+// 删除链表倒数第 n 个节点
+func RemoveNthFromEnd(head *ListNode, n int) *ListNode {
+	// 快慢指针，慢指针距离 n，快指针到尾部时删除慢指针指向的节点
+	dummyHead := &ListNode{
+		Next: head,
+	}
+	slow, fast := dummyHead, dummyHead
+	for i := 0; i <= n; i++ { // 慢指针需要指向第 n-1 个节点
+		fast = fast.Next
+	}
+	for fast != nil { // n+1 次循环后 fast 可能指向 nil，无法访问 fast.Next
+		fast = fast.Next
+		slow = slow.Next
+	}
+	slow.Next = slow.Next.Next
+	return dummyHead.Next
+}
