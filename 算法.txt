@@ -30,3 +30,6 @@ append() 会动态影响容量
 基本操作见 models/hashmap.go
 
 只有小写字母时，不用哈希表用数组
+
+字符串：
+string 和 []byte 有区别
