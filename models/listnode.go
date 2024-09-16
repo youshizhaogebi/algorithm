@@ -9,6 +9,9 @@ import()
 // 添加节点时创建新节点
 // 查询时创建新指针
 
+// 常用双指针法
+// 出现环形，考虑两个指针的步数之间的关系
+
 // 定义节点
 type ListNode struct {
 	Val  int
@@ -108,7 +111,7 @@ func (list *MyLinkedList) DeleteAtIndex(index int) {
 // 反转链表
 func ReverseList(head *ListNode) *ListNode {
 	// cur 遍历过程中，利用 tmp、pre 实现交换
-	// cur 移动后，将当前节点指向 pre
+	// cur 移动后，将当前节点 pre 指向 cur
 	cur := head
 	var pre *ListNode = nil // pre 初始化为 nil，不会打印出来，不然会打印 0
 	for cur != nil {

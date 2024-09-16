@@ -33,3 +33,6 @@ append() 会动态影响容量
 
 字符串：
 string 和 []byte 有区别
+初始化也有区别：
+var start []byte  // 声明一个空的 []byte 切片，默认值为 nil
+start := []byte{}  // 初始化一个长度为 0 的空切片
