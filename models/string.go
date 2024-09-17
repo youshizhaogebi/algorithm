@@ -4,6 +4,9 @@ import ()
 
 // 字符串相关操作
 
+// string s 不可变，可以读取
+// str = []byte(s) 字符串改为字节切片，可以修改，修改完后再改为字符串
+
 // 反转字符串
 func Reverse(s []byte) {
 	// 直接交换 s[i], s[len-i-1]
