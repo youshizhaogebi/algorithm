@@ -1,6 +1,6 @@
 package models
 
-import ()
+import "container/heap"
 
 // 队列相关操作
 // 数组队列，还有
@@ -93,5 +93,74 @@ func MaxSlidingWindow(nums []int, k int) []int {
 	return res
 }
 
-// 3. 优先级队列
+// 3. 优先级队列（堆）
+// 定义堆结构
+type Pair struct {
+	Num  int
+	Freq int
+}
 
+// 最小堆
+type MinHeap []Pair
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i].Freq < h[j].Freq } // 按照频率从小到大排序
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(Pair))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[:n-1]
+	return x
+}
+
+// 返回数组中出现频率前 k 高的元素
+func TopKFrequent(nums []int, k int) []int {
+	// 方法一：优先级队列
+	// 根据频率构建 map
+	// 构建小堆顶，放入堆（完全二叉树）中，遇到频率高的就弹出堆顶
+	// 倒叙构建 res 数组T
+
+	// 1. 统计每个元素的出现频率
+	freqMap := make(map[int]int)
+	for _, num := range nums {
+		freqMap[num]++
+	}
+
+	// 2. 使用小根堆来维护前 k 个频率最大的元素
+	h := &MinHeap{}
+	heap.Init(h)
+	for num, freq := range freqMap {
+		heap.Push(h, Pair{Num: num, Freq: freq})
+		if h.Len() > k {
+			heap.Pop(h)
+		}
+	}
+
+	// 3. 提取堆中的元素
+	result := make([]int, k)
+	for i := 0; i < k; i++ {
+		result[i] = heap.Pop(h).(Pair).Num
+	}
+
+	return result
+
+	// 方法二：构建 map 后调用 sort 包进行排序
+	// res := []int{}
+	// freqMap := map[int]int{}
+	// for _, num := range nums {
+	// 	freqMap[num]++
+	// }
+	// for key, _ := range freqMap {
+	// 	res = append(res, key)
+	// }
+	// sort.Slice(res, func(i, j int) bool {
+	// 	return freqMap[res[i]] > freqMap[res[j]]
+	// })
+	// return res[:k]
+}
