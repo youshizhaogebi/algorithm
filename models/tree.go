@@ -1,5 +1,152 @@
 package models
 
-import()
+import "container/list"
 
 // 二叉树相关操作
+
+// 链式存储的二叉树
+// 比链表多一个指针
+
+// 定义二叉树结构体
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+// 前序遍历
+func PreOrderTraversal(root *TreeNode) []int {
+	// 方法一：迭代法，切片实现栈
+	var result []int
+	if root == nil {
+		return result
+	}
+	stack := []*TreeNode{root} // 初始化栈，根节点入栈
+	for len(stack) > 0 {
+		// 弹出栈顶节点
+		node := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		// 访问该节点
+		result = append(result, node.Val)
+
+		// 右子树入栈，左子树入栈。左子树会先处理
+		if node.Right != nil {
+			stack = append(stack, node.Right)
+		}
+		if node.Left != nil {
+			stack = append(stack, node.Left)
+		}
+	}
+	return result
+
+	// 方法二：递归法
+
+	// var result []int
+	// // 定义递归函数
+	// var traverse func(node *TreeNode)
+	// traverse = func(node *TreeNode) {
+	// 	if node == nil {
+	// 		return
+	// 	}
+	// 	// 根节点开始
+	// 	result = append(result, node.Val)
+	// 	// 遍历左子树
+	// 	traverse(node.Left)
+	// 	// 遍历右子树
+	// 	traverse(node.Right)
+	// }
+	// traverse(root)
+	// return result
+}
+
+// 中序遍历
+func InOrderTraversal(root *TreeNode) []int {
+	// 方法一：迭代法，使用双向链表作为栈
+	result := []int{}
+	stack := list.New() // 使用双向链表作为栈
+	current := root
+	for current != nil || stack.Len() > 0 {
+		// 先遍历左子树
+		for current != nil {
+			stack.PushBack(current)
+			current = current.Left
+		}
+
+		// 访问栈顶节点
+		if stack.Len() > 0 {
+			node := stack.Remove(stack.Back()).(*TreeNode) // 弹出栈顶元素
+			result = append(result, node.Val)              // 访问节点
+			current = node.Right                           // 继续遍历右子树
+		}
+	}
+	return result
+
+	// // 方法二：递归法
+
+	// var result []int
+	// var traverse func(node *TreeNode)
+	// traverse = func(node *TreeNode) {
+	// 	if node == nil {
+	// 		return
+	// 	}
+	// 	traverse(node.Left)
+	// 	result = append(result, node.Val)
+	// 	traverse(node.Right)
+	// }
+	// traverse(root)
+	// return result
+}
+
+// 定义操作类型，用于区分“访问”还是“处理”
+type Command struct {
+	Action string // "visit" or "process"
+	Node   *TreeNode
+}
+
+// 后序遍历
+func PostOrderTraversal(root *TreeNode) []int {
+	// 方法一：统一迭代法
+	if root == nil {
+		return nil
+	}
+	result := []int{}
+	stack := []Command{{"visit", root}}
+	for len(stack) > 0 {
+		// 弹出栈顶元素
+		command := stack[len(stack)-1]
+		stack = stack[:len(stack)-1]
+
+		if command.Action == "process" {
+			// 如果是处理操作，记录节点值
+			result = append(result, command.Node.Val)
+		} else if command.Node != nil {
+			// 后序遍历的顺序是 左 -> 右 -> 根
+			stack = append(stack, Command{"process", command.Node}) // 处理当前节点
+			if command.Node.Right != nil {
+				stack = append(stack, Command{"visit", command.Node.Right}) // 访问右子树
+			}
+			if command.Node.Left != nil {
+				stack = append(stack, Command{"visit", command.Node.Left}) // 访问左子树
+			}
+		}
+	}
+	return result
+
+	// 方法二：递归法
+
+	// var result []int
+	// var traverse func(node *TreeNode)
+	// traverse = func(node *TreeNode) {
+	// 	if node == nil {
+	// 		return
+	// 	}
+	// 	traverse(node.Left)
+	// 	traverse(node.Right)
+	// 	result = append(result, node.Val)
+	// }
+	// traverse(root)
+	// return result
+}
+
+// 层次遍历，广度优先搜素（一层一层，从左到右）
