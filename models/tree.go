@@ -1,6 +1,8 @@
 package models
 
-import "container/list"
+import (
+	"container/list"
+)
 
 // 二叉树相关操作
 
@@ -150,3 +152,34 @@ func PostOrderTraversal(root *TreeNode) []int {
 }
 
 // 层次遍历，广度优先搜素（一层一层，从左到右）
+func LevelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return nil
+	}
+	res := [][]int{}
+	curLevel := []*TreeNode{root}
+	for len(curLevel) > 0 {
+		// 预分配每一层节点的值
+		vals := make([]int, 0, len(curLevel))
+		nextLevel := make([]*TreeNode, 0, len(curLevel)*2) // 下一次节点数最多是当前层两倍
+
+		// 遍历当前层节点
+		for _, node := range curLevel {
+			vals = append(vals, node.Val)
+			if node.Left != nil {
+				nextLevel = append(nextLevel, node.Left)
+			}
+			if node.Right != nil {
+				nextLevel = append(nextLevel, node.Right)
+			}
+		}
+
+		// 添加当前层的节点值到结果中
+		res = append(res, vals)
+		// res = append([][]int{vals}, res...) // 自底向上层次遍历。还可以遍历 res 交换位置
+
+		curLevel = nextLevel
+	}
+
+	return res
+}
