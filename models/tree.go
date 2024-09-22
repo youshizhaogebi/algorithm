@@ -183,3 +183,61 @@ func LevelOrder(root *TreeNode) [][]int {
 
 	return res
 }
+
+// Morris 遍历。修改树的结果，空间复杂度 O(1)
+func MorrisInOrder(root *TreeNode) []int {
+	result := []int{}
+	current := root
+
+	for current != nil {
+		if current.Left == nil {
+			result = append(result, current.Val)
+			current = current.Right
+		} else {
+			// 找到当前节点左子树的最右节点
+			pre := current.Left
+			for pre.Right != nil && pre.Right != current {
+				pre = pre.Right
+			}
+
+			// 建立临时链接
+			if pre.Right == nil {
+				pre.Right = current
+				current = current.Left
+			} else {
+				// 访问当前节点
+				pre.Right = nil
+				result = append(result, current.Val)
+				current = current.Right
+			}
+		}
+	}
+
+	return result
+}
+
+// 判断两个树是否相同
+func IsSameTree(p *TreeNode, q *TreeNode) bool {
+	// 递归
+
+	if p == nil && q == nil {
+		return true
+	}
+	if p == nil || q == nil || p.Val != q.Val {
+		return false
+	}
+	return IsSameTree(p.Left, q.Left) && IsSameTree(p.Right, q.Right)
+}
+
+// 判断 root 中是否包含 subRoot
+func IsSubtree(root *TreeNode, subRoot *TreeNode) bool {
+	// 递归
+	
+	if root == nil {
+		return false
+	}
+	if IsSameTree(root, subRoot) {
+		return true
+	}
+	return IsSubtree(root.Left, subRoot) || IsSubtree(root.Right, subRoot)
+}
