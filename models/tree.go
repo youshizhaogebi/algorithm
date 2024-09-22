@@ -2,6 +2,8 @@ package models
 
 import (
 	"container/list"
+	"strconv"
+	"strings"
 )
 
 // 二叉树相关操作
@@ -32,7 +34,7 @@ func PreOrderTraversal(root *TreeNode) []int {
 		// 访问该节点
 		result = append(result, node.Val)
 
-		// 右子树入栈，左子树入栈。左子树会先处理
+		// 右子树入栈，再左子树入栈。左子树会先处理
 		if node.Right != nil {
 			stack = append(stack, node.Right)
 		}
@@ -123,7 +125,7 @@ func PostOrderTraversal(root *TreeNode) []int {
 			// 如果是处理操作，记录节点值
 			result = append(result, command.Node.Val)
 		} else if command.Node != nil {
-			// 后序遍历的顺序是 左 -> 右 -> 根
+			// 后序遍历的顺序是 左 -> 右 -> 根，入栈顺序相反
 			stack = append(stack, Command{"process", command.Node}) // 处理当前节点
 			if command.Node.Right != nil {
 				stack = append(stack, Command{"visit", command.Node.Right}) // 访问右子树
@@ -240,4 +242,78 @@ func IsSubtree(root *TreeNode, subRoot *TreeNode) bool {
 		return true
 	}
 	return IsSubtree(root.Left, subRoot) || IsSubtree(root.Right, subRoot)
+}
+
+// 返回所以根节点到叶子节点路径
+func BinaryTreePaths(root *TreeNode) []string {
+	// 方法一：递归,回溯
+	// 隐式回溯，每次递归调用中 s 是通过值传递的，每次递归都会生成一个新的 s
+	// 动态构建字符串时，使用 strings.Builder
+	// 构建实例后使用 WriteString, WriteRune 函数
+
+	res := make([]string, 0)
+	var travel func(node *TreeNode, s string)
+
+	// 递归遍历函数
+	travel = func(node *TreeNode, s string) {
+		// 判断当前节点是否为叶子节点
+		if node.Left == nil && node.Right == nil {
+			v := s + strconv.Itoa(node.Val) // 构建路径字符串
+			res = append(res, v)            // 将路径添加到结果中
+			return
+		}
+		s = s + strconv.Itoa(node.Val) + "->" // 更新路径字符串
+
+		// 递归遍历左右子树
+		if node.Left != nil {
+			travel(node.Left, s)
+		}
+		if node.Right != nil {
+			travel(node.Right, s)
+		}
+	}
+
+	travel(root, "") // 从根节点开始遍历
+	return res       // 返回所有路径
+
+	// 方法二：迭代法
+
+	// stack := []*TreeNode{}     // 栈用于存储节点
+	// paths := make([]string, 0) // 存储对应节点的路径
+	// res := make([]string, 0)   // 最终结果，存储所有路径
+
+	// // 初始化栈和路径
+	// if root != nil {
+	// 	stack = append(stack, root)
+	// 	paths = append(paths, "")
+	// }
+
+	// // 深度优先遍历
+	// for len(stack) > 0 {
+	// 	l := len(stack)     // 当前栈的大小
+	// 	node := stack[l-1]  // 获取栈顶节点
+	// 	path := paths[l-1]  // 获取对应的路径
+	// 	stack = stack[:l-1] // 弹出栈顶节点
+	// 	paths = paths[:l-1] // 弹出对应路径
+
+	// 	// 如果是叶子节点，保存当前路径
+	// 	if node.Left == nil && node.Right == nil {
+	// 		res = append(res, path+strconv.Itoa(node.Val))
+	// 		continue
+	// 	}
+
+	// 	// 处理右子节点
+	// 	if node.Right != nil {
+	// 		stack = append(stack, node.Right)                       // 将右子节点压入栈
+	// 		paths = append(paths, path+strconv.Itoa(node.Val)+"->") // 更新路径
+	// 	}
+
+	// 	// 处理左子节点
+	// 	if node.Left != nil {
+	// 		stack = append(stack, node.Left)                        // 将左子节点压入栈
+	// 		paths = append(paths, path+strconv.Itoa(node.Val)+"->") // 更新路径
+	// 	}
+	// }
+
+	// return res // 返回所有路径
 }
