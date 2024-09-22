@@ -229,10 +229,10 @@ func IsSameTree(p *TreeNode, q *TreeNode) bool {
 	return IsSameTree(p.Left, q.Left) && IsSameTree(p.Right, q.Right)
 }
 
-// 判断 root 中是否包含 subRoot
+// 判断两个树是否存在包含关系
 func IsSubtree(root *TreeNode, subRoot *TreeNode) bool {
 	// 递归
-	
+
 	if root == nil {
 		return false
 	}
