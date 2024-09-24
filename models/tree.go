@@ -3,7 +3,6 @@ package models
 import (
 	"container/list"
 	"strconv"
-	"strings"
 )
 
 // 二叉树相关操作
