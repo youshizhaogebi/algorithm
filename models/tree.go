@@ -316,3 +316,83 @@ func BinaryTreePaths(root *TreeNode) []string {
 
 	// return res // 返回所有路径
 }
+
+// 求路径和，返回和等于给定值的路径
+func PathSum(root *TreeNode, targetSum int) [][]int {
+	// 方法一：递归 + 回溯
+	res := [][]int{}
+	var backtrack func(node *TreeNode, curPath []int, curSum int)
+	backtrack = func(node *TreeNode, curPath []int, curSum int) {
+		if node == nil {
+			return
+		}
+
+		// 添加当前节点到路径中
+		curPath = append(curPath, node.Val)
+		curSum += node.Val
+
+		// 判断节点是否为叶子节点，路径和是否等于目标值
+		if node.Left == nil && node.Right == nil && curSum == targetSum {
+			res = append(res, append([]int{}, curPath...))
+		} else {
+			// 递归，遍历左右子树
+			backtrack(node.Left, curPath, curSum)
+			backtrack(node.Right, curPath, curSum)
+		}
+
+		// 回溯，移除当前节点
+		// 这里不需要显式进行回溯，每次递归调用中我们都创建了一个新的切片
+		// curPath = curPath[:len(curPath)-1]
+	}
+
+	backtrack(root, []int{}, 0)
+
+	return res
+
+	// 方法二：迭代
+	// res := [][]int{}
+	// if root == nil {
+	// 	return res
+	// }
+
+	// // 使用栈存储节点、当前路径、路径和
+	// stack := []struct { // 创建栈，存放结构体数组
+	// 	node *TreeNode
+	// 	path []int
+	// 	sum  int
+	// }{{root, []int{}, 0}} // 先将根节点加入到栈中
+
+	// for len(stack) > 0 {
+	// 	// 获取栈顶的结构体元素
+	// 	top := stack[len(stack)-1]
+	// 	stack = stack[:len(stack)-1] // 弹出栈顶
+
+	// 	node := top.node
+	// 	curPath := append(top.path, node.Val)
+	// 	curSum := top.sum + node.Val
+
+	// 	// 检查节点是否为叶子节点，路径和是否等于目标值
+	// 	if node.Left == nil && node.Right == nil && curSum == targetSum {
+	// 		// 深拷贝
+	// 		res = append(res, append([]int{}, curPath...)) // 先将 curPath 传入空切片，再加入 res。避免后序更改 curPath 对 res 造成影响
+	// 	}
+
+	// 	// 右子树、左子树入栈，会优先处理左子树
+	// 	if node.Right != nil {
+	// 		stack = append(stack, struct {
+	// 			node *TreeNode
+	// 			path []int
+	// 			sum  int
+	// 		}{node.Right, curPath, curSum})
+	// 	}
+	// 	if node.Left != nil {
+	// 		stack = append(stack, struct {
+	// 			node *TreeNode
+	// 			path []int
+	// 			sum  int
+	// 		}{node.Left, curPath, curSum})
+	// 	}
+	// }
+
+	// return res
+}
